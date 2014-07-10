@@ -17,6 +17,7 @@ The container expects the following environment variables to be passed in:
 * `AWS_ACCESS_KEY_ID` - AWS access key ID with read/write permissions on `S3_BUCKET`
 * `AWS_SECRET_ACCESS_KEY` - secret key for `AWS_ACCESS_KEY_ID`
 * `HOSTNAME` - addressable hostname for this node (Exhibitor will forward users of the UI to this address)
+* `AWS_REGION` - (optional) the AWS region of the S3 bucket (defaults to `us-west-2`)
 
 Starting the container:
 

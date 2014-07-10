@@ -3,11 +3,13 @@
 # Generates the default exhibitor config and launches exhibitor
 
 MISSING_VAR_MESSAGE="must be set"
+DEFAULT_AWS_REGION="us-west-2"
 : ${S3_BUCKET:?$MISSING_VAR_MESSAGE}
 : ${S3_PREFIX:?$MISSING_VAR_MESSAGE}
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
 : ${AWS_ACCESS_KEY_ID:?$MISSING_VAR_MESSAGE}
 : ${AWS_SECRET_ACCESS_KEY:?$MISSING_VAR_MESSAGE}
+: ${AWS_REGION:=$DEFAULT_AWS_REGION}
 
 cat <<- EOF > /opt/exhibitor/defaults.conf
 	zookeeper-data-directory=/opt/zookeeper/snapshots
@@ -51,4 +53,4 @@ java -jar /opt/exhibitor/exhibitor.jar \
 	--port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
 	--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
 	--s3credentials /opt/exhibitor/credentials.properties \
-	--s3region us-west-2 --s3backup true --hostname ${HOSTNAME}
+	--s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME}
