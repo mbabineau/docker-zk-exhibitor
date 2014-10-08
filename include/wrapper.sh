@@ -36,10 +36,15 @@ cat <<- EOF > /opt/exhibitor/credentials.properties
 	com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
 EOF
 
+if [[ -n ${ZK_PASSWORD} ]]; then
+	SECURITY="--security web.xml --realm Zookeeper:realm --remoteauth basic:zk"
+	echo "zk: ${ZK_PASSWORD},zk" > realm
+fi
+
 exec 2>&1
 
 # If we use exec and this is the docker entrypoint, Exhibitor fails to kill the ZK process on restart.
-# If we use /bin/bash as the entrypoint and run wrapper.sh by hand, we do not see this behavior. I suspect 
+# If we use /bin/bash as the entrypoint and run wrapper.sh by hand, we do not see this behavior. I suspect
 # some init or PID-related shenanigans, but I'm punting on further troubleshooting for now since dropping
 # the "exec" fixes it.
 #
@@ -53,4 +58,5 @@ java -jar /opt/exhibitor/exhibitor.jar \
 	--port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
 	--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
 	--s3credentials /opt/exhibitor/credentials.properties \
-	--s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME}
+	--s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
+	${SECURITY}

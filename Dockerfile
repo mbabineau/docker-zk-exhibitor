@@ -7,7 +7,7 @@ FROM thefactory/java
 MAINTAINER Mike Babineau mike@thefactory.com
 
 # Get ZK
-ADD http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz /tmp/zookeeper-3.4.6.tar.gz
+RUN curl -o /tmp/zookeeper-3.4.6.tar.gz http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
 RUN tar -xzf /tmp/zookeeper-3.4.6.tar.gz -C /opt && rm /tmp/zookeeper-3.4.6.tar.gz
 RUN ln -s /opt/zookeeper-3.4.6 /opt/zookeeper
 RUN mkdir /opt/zookeeper/transactions /opt/zookeeper/snapshots
@@ -20,6 +20,9 @@ RUN ln -s /opt/exhibitor/target/exhibitor-1.0-jar-with-dependencies.jar /opt/exh
 
 # Add the wrapper script to setup configs and exec exhibitor
 ADD include/wrapper.sh /opt/exhibitor/wrapper.sh
+
+# Add the optional web.xml for authentication
+ADD include/web.xml /opt/exhibitor/web.xml
 
 USER root
 WORKDIR /opt/exhibitor
