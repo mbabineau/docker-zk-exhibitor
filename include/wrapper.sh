@@ -7,8 +7,6 @@ DEFAULT_AWS_REGION="us-west-2"
 : ${S3_BUCKET:?$MISSING_VAR_MESSAGE}
 : ${S3_PREFIX:?$MISSING_VAR_MESSAGE}
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
-: ${AWS_ACCESS_KEY_ID:?$MISSING_VAR_MESSAGE}
-: ${AWS_SECRET_ACCESS_KEY:?$MISSING_VAR_MESSAGE}
 : ${AWS_REGION:=$DEFAULT_AWS_REGION}
 
 cat <<- EOF > /opt/exhibitor/defaults.conf
@@ -31,10 +29,12 @@ cat <<- EOF > /opt/exhibitor/defaults.conf
 	auto-manage-instances=1
 EOF
 
-cat <<- EOF > /opt/exhibitor/credentials.properties
-	com.netflix.exhibitor.s3.access-key-id=${AWS_ACCESS_KEY_ID}
-	com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
-EOF
+if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
+  cat <<- EOF > /opt/exhibitor/credentials.properties
+    com.netflix.exhibitor.s3.access-key-id=${AWS_ACCESS_KEY_ID}
+    com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
+  EOF
+fi
 
 if [[ -n ${ZK_PASSWORD} ]]; then
 	SECURITY="--security web.xml --realm Zookeeper:realm --remoteauth basic:zk"
