@@ -54,9 +54,17 @@ exec 2>&1
 # 	--s3credentials /opt/exhibitor/credentials.properties \
 # 	--s3region us-west-2 --s3backup true
 
-java -jar /opt/exhibitor/exhibitor.jar \
-	--port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
-	--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
-	--s3credentials /opt/exhibitor/credentials.properties \
-	--s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
-	${SECURITY}
+if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
+  java -jar /opt/exhibitor/exhibitor.jar \
+    --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
+    --configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
+    --s3credentials /opt/exhibitor/credentials.properties \
+    --s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
+    ${SECURITY}
+else
+  java -jar /opt/exhibitor/exhibitor.jar \
+    --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
+    --configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
+    --s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
+    ${SECURITY}
+fi
