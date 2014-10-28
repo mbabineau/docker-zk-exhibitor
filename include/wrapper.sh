@@ -33,7 +33,7 @@ if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
   cat <<- EOF > /opt/exhibitor/credentials.properties
     com.netflix.exhibitor.s3.access-key-id=${AWS_ACCESS_KEY_ID}
     com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
-  EOF
+EOF
 fi
 
 if [[ -n ${ZK_PASSWORD} ]]; then
