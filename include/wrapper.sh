@@ -7,8 +7,6 @@ DEFAULT_AWS_REGION="us-west-2"
 : ${S3_BUCKET:?$MISSING_VAR_MESSAGE}
 : ${S3_PREFIX:?$MISSING_VAR_MESSAGE}
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
-: ${AWS_ACCESS_KEY_ID:?$MISSING_VAR_MESSAGE}
-: ${AWS_SECRET_ACCESS_KEY:?$MISSING_VAR_MESSAGE}
 : ${AWS_REGION:=$DEFAULT_AWS_REGION}
 
 cat <<- EOF > /opt/exhibitor/defaults.conf
@@ -31,10 +29,12 @@ cat <<- EOF > /opt/exhibitor/defaults.conf
 	auto-manage-instances=1
 EOF
 
-cat <<- EOF > /opt/exhibitor/credentials.properties
-	com.netflix.exhibitor.s3.access-key-id=${AWS_ACCESS_KEY_ID}
-	com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
+if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
+  cat <<- EOF > /opt/exhibitor/credentials.properties
+    com.netflix.exhibitor.s3.access-key-id=${AWS_ACCESS_KEY_ID}
+    com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
 EOF
+fi
 
 if [[ -n ${ZK_PASSWORD} ]]; then
 	SECURITY="--security web.xml --realm Zookeeper:realm --remoteauth basic:zk"
@@ -54,9 +54,17 @@ exec 2>&1
 # 	--s3credentials /opt/exhibitor/credentials.properties \
 # 	--s3region us-west-2 --s3backup true
 
-java -jar /opt/exhibitor/exhibitor.jar \
-	--port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
-	--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
-	--s3credentials /opt/exhibitor/credentials.properties \
-	--s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
-	${SECURITY}
+if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
+  java -jar /opt/exhibitor/exhibitor.jar \
+    --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
+    --configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
+    --s3credentials /opt/exhibitor/credentials.properties \
+    --s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
+    ${SECURITY}
+else
+  java -jar /opt/exhibitor/exhibitor.jar \
+    --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
+    --configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
+    --s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
+    ${SECURITY}
+fi
