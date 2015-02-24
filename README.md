@@ -6,7 +6,7 @@ Available on the Docker Index as [thefactory/zookeeper-exhibitor](https://index.
     docker pull thefactory/zookeeper-exhibitor
 
 ### Versions
-* Exhibitor 1.5.2
+* Exhibitor 1.5.4
 * ZooKeeper 3.4.6
 
 ### Usage
