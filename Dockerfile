@@ -15,8 +15,8 @@ RUN mkdir /opt/zookeeper/transactions /opt/zookeeper/snapshots
 # Get Exhibitor
 RUN mkdir /opt/exhibitor
 ADD include/pom.xml /opt/exhibitor/pom.xml
-RUN cd /opt/exhibitor && mvn assembly:single
-RUN ln -s /opt/exhibitor/target/exhibitor-1.0-jar-with-dependencies.jar /opt/exhibitor/exhibitor.jar
+RUN cd /opt/exhibitor && mvn clean package
+RUN ln -s /opt/exhibitor/target/exhibitor-1.0.jar /opt/exhibitor/exhibitor.jar
 
 # Add the wrapper script to setup configs and exec exhibitor
 ADD include/wrapper.sh /opt/exhibitor/wrapper.sh
