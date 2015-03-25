@@ -19,7 +19,7 @@ RUN \
 
     # Install ZK
     && curl -Lo /tmp/zookeeper.tgz $ZK_RELEASE \
-    && mkdir -p /opt/zookeeper/{transactions,snapshots} \
+    && mkdir -p /opt/zookeeper/transactions /opt/zookeeper/snapshots \
     && tar -xzf /tmp/zookeeper.tgz -C /opt/zookeeper --strip=1 \
     && rm /tmp/zookeeper.tgz \
 
