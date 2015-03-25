@@ -5,7 +5,7 @@ ENV ZK_RELEASE http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.
 ENV EXHIBITOR_POM https://raw.githubusercontent.com/mbabineau/docker-zk-exhibitor/0e120360859c5c1c3cfbc81390f363c57e3a146a/include/pom.xml
 
 # Append "+" to ensure the package doesn't get purged
-ENV BUILD_DEPS curl maven openjdk-7-jdk openjdk-7-jre-headless+
+ENV BUILD_DEPS curl maven openjdk-7-jdk+
 ENV DEBIAN_FRONTEND noninteractive
 
 # Use one step so we can remove intermediate dependencies and minimize size
