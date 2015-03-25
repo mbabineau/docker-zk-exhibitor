@@ -1,12 +1,12 @@
 FROM debian:7.8
 MAINTAINER Mike Babineau michael.babineau@gmail.com
 
-ENV ZK_RELEASE http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
-ENV EXHIBITOR_POM https://raw.githubusercontent.com/mbabineau/docker-zk-exhibitor/0e120360859c5c1c3cfbc81390f363c57e3a146a/include/pom.xml
-
-# Append "+" to ensure the package doesn't get purged
-ENV BUILD_DEPS curl maven openjdk-7-jdk+
-ENV DEBIAN_FRONTEND noninteractive
+ENV \
+    ZK_RELEASE="http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz" \
+    EXHIBITOR_POM="https://raw.githubusercontent.com/mbabineau/docker-zk-exhibitor/0e120360859c5c1c3cfbc81390f363c57e3a146a/include/pom.xml" \
+    # Append "+" to ensure the package doesn't get purged
+    BUILD_DEPS="curl maven openjdk-7-jdk+" \
+    DEBIAN_FRONTEND="noninteractive"
 
 # Use one step so we can remove intermediate dependencies and minimize size
 RUN \
