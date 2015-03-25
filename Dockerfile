@@ -4,7 +4,7 @@
 
 FROM thefactory/java
 
-MAINTAINER Mike Babineau mike@thefactory.com
+MAINTAINER Mike Babineau michael.babineau@gmail.com
 
 # Get ZK
 RUN curl -o /tmp/zookeeper-3.4.6.tar.gz http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
