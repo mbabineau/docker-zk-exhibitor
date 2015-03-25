@@ -1,22 +1,37 @@
-# Exhibitor + ZooKeeper
-#
-# VERSION       1
-
-FROM thefactory/java
-
+FROM debian:7.8
 MAINTAINER Mike Babineau michael.babineau@gmail.com
 
-# Get ZK
-RUN curl -o /tmp/zookeeper-3.4.6.tar.gz http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
-RUN tar -xzf /tmp/zookeeper-3.4.6.tar.gz -C /opt && rm /tmp/zookeeper-3.4.6.tar.gz
-RUN ln -s /opt/zookeeper-3.4.6 /opt/zookeeper
-RUN mkdir /opt/zookeeper/transactions /opt/zookeeper/snapshots
+ENV ZK_RELEASE http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz
+ENV EXHIBITOR_POM https://raw.githubusercontent.com/mbabineau/docker-zk-exhibitor/0e120360859c5c1c3cfbc81390f363c57e3a146a/include/pom.xml
 
-# Get Exhibitor
-RUN mkdir /opt/exhibitor
-ADD include/pom.xml /opt/exhibitor/pom.xml
-RUN cd /opt/exhibitor && mvn clean package
-RUN ln -s /opt/exhibitor/target/exhibitor-1.0.jar /opt/exhibitor/exhibitor.jar
+# Append "+" to ensure the package doesn't get purged
+ENV BUILD_DEPS curl maven openjdk-7-jdk openjdk-7-jre-headless+
+ENV DEBIAN_FRONTEND noninteractive
+
+# Use one step so we can remove intermediate dependencies and minimize size
+RUN \
+    # Install dependencies
+    apt-get update \
+    && apt-get install -y --no-install-recommends $BUILD_DEPS \
+
+    # Default DNS cache TTL is -1. DNS records, like, change, man.
+    && grep '^networkaddress.cache.ttl=' /etc/java-7-openjdk/security/java.security || echo 'networkaddress.cache.ttl=60' >> /etc/java-7-openjdk/security/java.security \
+
+    # Install ZK
+    && curl -Lo /tmp/zookeeper.tgz $ZK_RELEASE \
+    && mkdir -p /opt/zookeeper/{transactions,snapshots} \
+    && tar -xzf /tmp/zookeeper.tgz -C /opt/zookeeper --strip=1 \
+    && rm /tmp/zookeeper.tgz \
+
+    # Install Exhibitor
+    && mkdir -p /opt/exhibitor \
+    && curl -Lo /opt/exhibitor/pom.xml $EXHIBITOR_POM \
+    && mvn -f /opt/exhibitor/pom.xml assembly:single \
+    && ln -s /opt/exhibitor/target/exhibitor*jar /opt/exhibitor/exhibitor.jar \
+
+    # Remove build-time dependencies
+    && apt-get purge -y --auto-remove $BUILD_DEPS \
+    && rm -rf /var/lib/apt/lists/*
 
 # Add the wrapper script to setup configs and exec exhibitor
 ADD include/wrapper.sh /opt/exhibitor/wrapper.sh

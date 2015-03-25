@@ -1,4 +1,4 @@
-#/bin/bash -ex
+#/bin/bash -e
 
 # Generates the default exhibitor config and launches exhibitor
 
