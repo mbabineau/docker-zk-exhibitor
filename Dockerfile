@@ -3,7 +3,7 @@ MAINTAINER Mike Babineau michael.babineau@gmail.com
 
 ENV \
     ZK_RELEASE="http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz" \
-    EXHIBITOR_POM="https://raw.githubusercontent.com/Netflix/exhibitor/5587ccf267def3538872ce73b9bafef8cecce23b/exhibitor-standalone/src/main/resources/buildscripts/standalone/maven/pom.xml" \
+    EXHIBITOR_POM="https://raw.githubusercontent.com/Netflix/exhibitor/d911a16d704bbe790d84bbacc655ef050c1f5806/exhibitor-standalone/src/main/resources/buildscripts/standalone/maven/pom.xml" \
     # Append "+" to ensure the package doesn't get purged
     BUILD_DEPS="curl maven openjdk-7-jdk+" \
     DEBIAN_FRONTEND="noninteractive"
