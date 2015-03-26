@@ -3,7 +3,7 @@ MAINTAINER Mike Babineau michael.babineau@gmail.com
 
 ENV \
     ZK_RELEASE="http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz" \
-    EXHIBITOR_POM="https://raw.githubusercontent.com/mbabineau/docker-zk-exhibitor/0e120360859c5c1c3cfbc81390f363c57e3a146a/include/pom.xml" \
+    EXHIBITOR_POM="https://raw.githubusercontent.com/Netflix/exhibitor/5587ccf267def3538872ce73b9bafef8cecce23b/exhibitor-standalone/src/main/resources/buildscripts/standalone/maven/pom.xml" \
     # Append "+" to ensure the package doesn't get purged
     BUILD_DEPS="curl maven openjdk-7-jdk+" \
     DEBIAN_FRONTEND="noninteractive"
@@ -26,7 +26,7 @@ RUN \
     # Install Exhibitor
     && mkdir -p /opt/exhibitor \
     && curl -Lo /opt/exhibitor/pom.xml $EXHIBITOR_POM \
-    && mvn -f /opt/exhibitor/pom.xml assembly:single \
+    && mvn -f /opt/exhibitor/pom.xml package \
     && ln -s /opt/exhibitor/target/exhibitor*jar /opt/exhibitor/exhibitor.jar \
 
     # Remove build-time dependencies

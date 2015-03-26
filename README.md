@@ -5,7 +5,7 @@ Available on the Docker Index as [mbabineau/zookeeper-exhibitor](https://index.d
     docker pull mbabineau/zookeeper-exhibitor
 
 ### Versions
-* Exhibitor 1.5.2
+* Exhibitor 1.5.4
 * ZooKeeper 3.4.6
 
 ### Usage
