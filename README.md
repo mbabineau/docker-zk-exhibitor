@@ -18,6 +18,8 @@ The container expects the following environment variables to be passed in:
 * `HOSTNAME` - addressable hostname for this node (Exhibitor will forward users of the UI to this address)
 * `AWS_REGION` - (optional) the AWS region of the S3 bucket (defaults to `us-west-2`)
 * `ZK_PASSWORD` - (optional) the HTTP Basic Auth password for the "zk" user
+* `ZK_DATA_DIR` - (optional) Zookeeper data directory
+* `ZK_LOG_DIR` - (optional) Zookeeper log directory
 
 Starting the container:
 
