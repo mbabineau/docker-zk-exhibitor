@@ -4,16 +4,20 @@
 
 MISSING_VAR_MESSAGE="must be set"
 DEFAULT_AWS_REGION="us-west-2"
+DEFAULT_DATA_DIR="/opt/zookeeper/snapshots"
+DEFAULT_LOG_DIR="/opt/zookeeper/transactions"
 : ${S3_BUCKET:?$MISSING_VAR_MESSAGE}
 : ${S3_PREFIX:?$MISSING_VAR_MESSAGE}
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
 : ${AWS_REGION:=$DEFAULT_AWS_REGION}
+: ${ZK_DATA_DIR:=$DEFAULT_DATA_DIR}
+: ${ZK_LOG_DIR:=$DEFAULT_LOG_DIR}
 
 cat <<- EOF > /opt/exhibitor/defaults.conf
-	zookeeper-data-directory=/opt/zookeeper/snapshots
+	zookeeper-data-directory=$ZK_DATA_DIR
 	zookeeper-install-directory=/opt/zookeeper
-	zookeeper-log-directory=/opt/zookeeper/transactions
-	log-index-directory=/opt/zookeeper/transactions
+	zookeeper-log-directory=$ZK_LOG_DIR
+	log-index-directory=$ZK_LOG_DIR
 	cleanup-period-ms=300000
 	check-ms=30000
 	backup-period-ms=600000
