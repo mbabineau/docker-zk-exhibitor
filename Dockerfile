@@ -1,4 +1,4 @@
-FROM debian:7.8
+FROM debian:latest
 MAINTAINER Mike Babineau michael.babineau@gmail.com
 
 ENV \
@@ -11,7 +11,7 @@ ENV \
 # Use one step so we can remove intermediate dependencies and minimize size
 RUN \
     # Install dependencies
-    apt-get update \
+    apt-get update && apt-get upgrade -y \
     && apt-get install -y --allow-unauthenticated --no-install-recommends $BUILD_DEPS \
 
     # Default DNS cache TTL is -1. DNS records, like, change, man.
