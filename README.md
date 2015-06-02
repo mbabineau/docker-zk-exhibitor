@@ -11,11 +11,11 @@ Available on the Docker Index as [mbabineau/zookeeper-exhibitor](https://index.d
 ### Usage
 The container expects the following environment variables to be passed in:
 
-* `S3_BUCKET` - bucket used by Exhibitor for backups and coordination
-* `S3_PREFIX` - key prefix within `S3_BUCKET` to use for this cluster
-* `AWS_ACCESS_KEY_ID` - AWS access key ID with read/write permissions on `S3_BUCKET`
-* `AWS_SECRET_ACCESS_KEY` - secret key for `AWS_ACCESS_KEY_ID`
 * `HOSTNAME` - addressable hostname for this node (Exhibitor will forward users of the UI to this address)
+* `S3_BUCKET` - (optional) bucket used by Exhibitor for backups and coordination
+* `S3_PREFIX` - (optional) key prefix within `S3_BUCKET` to use for this cluster
+* `AWS_ACCESS_KEY_ID` - (optional) AWS access key ID with read/write permissions on `S3_BUCKET`
+* `AWS_SECRET_ACCESS_KEY` - (optional) secret key for `AWS_ACCESS_KEY_ID`
 * `AWS_REGION` - (optional) the AWS region of the S3 bucket (defaults to `us-west-2`)
 * `ZK_PASSWORD` - (optional) the HTTP Basic Auth password for the "zk" user
 * `ZK_DATA_DIR` - (optional) Zookeeper data directory
