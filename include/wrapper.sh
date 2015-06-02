@@ -48,7 +48,7 @@ EOF
   S3_SECURITY="--s3credentials /opt/exhibitor/credentials.properties"
   BACKUP_CONFIG="--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} ${S3_SECURITY} --s3region ${AWS_REGION} --s3backup true"
 else
-  BACKUP_CONFIG="--configtype none"
+  BACKUP_CONFIG="--configtype file --fsconfigdir /opt/zookeeper/local_configs --filesystembackup true"
 fi
 
 if [[ -n ${ZK_PASSWORD} ]]; then
