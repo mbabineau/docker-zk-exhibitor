@@ -8,8 +8,6 @@ DEFAULT_DATA_DIR="/opt/zookeeper/snapshots"
 DEFAULT_LOG_DIR="/opt/zookeeper/transactions"
 S3_SECURITY=""
 HTTP_PROXY=""
-: ${S3_BUCKET:?$MISSING_VAR_MESSAGE}
-: ${S3_PREFIX:?$MISSING_VAR_MESSAGE}
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
 : ${AWS_REGION:=$DEFAULT_AWS_REGION}
 : ${ZK_DATA_DIR:=$DEFAULT_DATA_DIR}
@@ -31,7 +29,6 @@ cat <<- EOF > /opt/exhibitor/defaults.conf
 	cleanup-max-files=20
 	backup-max-store-ms=21600000
 	connect-port=2888
-	backup-extra=throttle\=&bucket-name\=${S3_BUCKET}&key-prefix\=${S3_PREFIX}&max-retries\=4&retry-sleep-ms\=30000
 	observer-threshold=0
 	election-port=3888
 	zoo-cfg-extra=tickTime\=2000&initLimit\=10&syncLimit\=5&quorumListenOnAllIPs\=true
@@ -46,7 +43,12 @@ if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
     com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
 EOF
 
+  echo 'backup-extra=throttle\=&bucket-name\=${S3_BUCKET}&key-prefix\=${S3_PREFIX}&max-retries\=4&retry-sleep-ms\=30000' >> /opt/exhibitor/defaults.conf
+
   S3_SECURITY="--s3credentials /opt/exhibitor/credentials.properties"
+  BACKUP_CONFIG="--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} ${S3_SECURITY} --s3region ${AWS_REGION} --s3backup true"
+else
+  BACKUP_CONFIG="--configtype none"
 fi
 
 if [[ -n ${ZK_PASSWORD} ]]; then
@@ -82,8 +84,7 @@ exec 2>&1
 
 java -jar /opt/exhibitor/exhibitor.jar \
   --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
-  --configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} \
-  ${S3_SECURITY} \
+  ${BACKUP_CONFIG} \
   ${HTTP_PROXY} \
-  --s3region ${AWS_REGION} --s3backup true --hostname ${HOSTNAME} \
+  --hostname ${HOSTNAME} \
   ${SECURITY}
