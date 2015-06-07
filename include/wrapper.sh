@@ -43,7 +43,7 @@ if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
     com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
 EOF
 
-  echo 'backup-extra=throttle\=&bucket-name\=${S3_BUCKET}&key-prefix\=${S3_PREFIX}&max-retries\=4&retry-sleep-ms\=30000' >> /opt/exhibitor/defaults.conf
+  echo "backup-extra=throttle\=&bucket-name\=${S3_BUCKET}&key-prefix\=${S3_PREFIX}&max-retries\=4&retry-sleep-ms\=30000" >> /opt/exhibitor/defaults.conf
 
   S3_SECURITY="--s3credentials /opt/exhibitor/credentials.properties"
   BACKUP_CONFIG="--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} ${S3_SECURITY} --s3region ${AWS_REGION} --s3backup true"
