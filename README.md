@@ -54,3 +54,41 @@ Then confirm ZK is available:
 
     $ echo ruok | nc <host> 2181
     imok
+
+### AWS IAM Policy
+Exhibitor can also use an IAM Role attached to an instance instead of passing access or secret keys. This is an example policy that would be needed for the instance:
+```
+{
+    "Statement": [
+        {
+            "Resource": [
+                "arn:aws:s3:::exhibitor-bucket/*",
+                "arn:aws:s3:::exhibitor-bucket"
+            ],
+            "Action": [
+                "s3:AbortMultipartUpload",
+                "s3:DeleteObject",
+                "s3:GetBucketAcl",
+                "s3:GetBucketPolicy",
+                "s3:GetObject",
+                "s3:GetObject",
+                "s3:GetObjectAcl",
+                "s3:ListBucket",
+                "s3:ListBucketMultipartUploads",
+                "s3:ListMultipartUploadParts",
+                "s3:PutObject",
+                "s3:PutObjectAcl"
+            ],
+            "Effect": "Allow"
+        }
+    ]
+}
+```
+
+Starting the container:
+
+    docker run -p 8181:8181 -p 2181:2181 -p 2888:2888 -p 3888:3888 \
+        -e S3_BUCKET=<bucket> \
+        -e S3_PREFIX=<key_prefix> \
+        -e HOSTNAME=<host> \
+        mbabineau/zookeeper-exhibitor:latest
