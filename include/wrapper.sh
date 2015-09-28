@@ -1,4 +1,4 @@
-#/bin/bash -e
+#! /bin/bash -e
 
 # Generates the default exhibitor config and launches exhibitor
 
@@ -6,13 +6,14 @@ MISSING_VAR_MESSAGE="must be set"
 DEFAULT_AWS_REGION="us-west-2"
 DEFAULT_DATA_DIR="/opt/zookeeper/snapshots"
 DEFAULT_LOG_DIR="/opt/zookeeper/transactions"
+DEFAULT_ZK_ENSEMBLE_SIZE=0
 S3_SECURITY=""
 HTTP_PROXY=""
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
 : ${AWS_REGION:=$DEFAULT_AWS_REGION}
 : ${ZK_DATA_DIR:=$DEFAULT_DATA_DIR}
-: ${ZK_CLUSTER_SIZE:=0}
 : ${ZK_LOG_DIR:=$DEFAULT_LOG_DIR}
+: ${ZK_ENSEMBLE_SIZE:=$DEFAULT_ZK_ENSEMBLE_SIZE}
 : ${HTTP_PROXY_HOST:=""}
 : ${HTTP_PROXY_PORT:=""}
 : ${HTTP_PROXY_USERNAME:=""}
@@ -35,7 +36,7 @@ cat <<- EOF > /opt/exhibitor/defaults.conf
 	zoo-cfg-extra=tickTime\=2000&initLimit\=10&syncLimit\=5&quorumListenOnAllIPs\=true
 	auto-manage-instances-settling-period-ms=0
 	auto-manage-instances=1
-	auto-manage-instances-fixed-ensemble-size=3
+	auto-manage-instances-fixed-ensemble-size=$ZK_ENSEMBLE_SIZE
 EOF
 
 
