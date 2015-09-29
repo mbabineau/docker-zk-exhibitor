@@ -1,4 +1,4 @@
-#/bin/bash -e
+#! /bin/bash -e
 
 # Generates the default exhibitor config and launches exhibitor
 
@@ -6,12 +6,14 @@ MISSING_VAR_MESSAGE="must be set"
 DEFAULT_AWS_REGION="us-west-2"
 DEFAULT_DATA_DIR="/opt/zookeeper/snapshots"
 DEFAULT_LOG_DIR="/opt/zookeeper/transactions"
+DEFAULT_ZK_ENSEMBLE_SIZE=0
 S3_SECURITY=""
 HTTP_PROXY=""
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
 : ${AWS_REGION:=$DEFAULT_AWS_REGION}
 : ${ZK_DATA_DIR:=$DEFAULT_DATA_DIR}
 : ${ZK_LOG_DIR:=$DEFAULT_LOG_DIR}
+: ${ZK_ENSEMBLE_SIZE:=$DEFAULT_ZK_ENSEMBLE_SIZE}
 : ${HTTP_PROXY_HOST:=""}
 : ${HTTP_PROXY_PORT:=""}
 : ${HTTP_PROXY_USERNAME:=""}
@@ -34,6 +36,7 @@ cat <<- EOF > /opt/exhibitor/defaults.conf
 	zoo-cfg-extra=tickTime\=2000&initLimit\=10&syncLimit\=5&quorumListenOnAllIPs\=true
 	auto-manage-instances-settling-period-ms=0
 	auto-manage-instances=1
+	auto-manage-instances-fixed-ensemble-size=$ZK_ENSEMBLE_SIZE
 EOF
 
 
@@ -42,10 +45,12 @@ if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
     com.netflix.exhibitor.s3.access-key-id=${AWS_ACCESS_KEY_ID}
     com.netflix.exhibitor.s3.access-secret-key=${AWS_SECRET_ACCESS_KEY}
 EOF
+  S3_SECURITY="--s3credentials /opt/exhibitor/credentials.properties"
+fi
 
+if [[ -n ${S3_BUCKET} ]]; then
   echo "backup-extra=throttle\=&bucket-name\=${S3_BUCKET}&key-prefix\=${S3_PREFIX}&max-retries\=4&retry-sleep-ms\=30000" >> /opt/exhibitor/defaults.conf
 
-  S3_SECURITY="--s3credentials /opt/exhibitor/credentials.properties"
   BACKUP_CONFIG="--configtype s3 --s3config ${S3_BUCKET}:${S3_PREFIX} ${S3_SECURITY} --s3region ${AWS_REGION} --s3backup true"
 else
   BACKUP_CONFIG="--configtype file --fsconfigdir /opt/zookeeper/local_configs --filesystembackup true"
