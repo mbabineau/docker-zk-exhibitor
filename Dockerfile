@@ -31,7 +31,10 @@ RUN \
 
     # Remove build-time dependencies
     && apt-get purge -y --auto-remove $BUILD_DEPS \
-    && rm -rf /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/* \
+
+    # Send zk output to stdout
+    && ln -sf /dev/stdout /opt/zookeeper/zookeeper.out
 
 # Add the wrapper script to setup configs and exec exhibitor
 ADD include/wrapper.sh /opt/exhibitor/wrapper.sh
@@ -44,3 +47,4 @@ WORKDIR /opt/exhibitor
 EXPOSE 2181 2888 3888 8181
 
 ENTRYPOINT ["bash", "-ex", "/opt/exhibitor/wrapper.sh"]
+
