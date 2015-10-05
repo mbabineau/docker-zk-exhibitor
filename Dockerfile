@@ -44,3 +44,4 @@ WORKDIR /opt/exhibitor
 EXPOSE 2181 2888 3888 8181
 
 ENTRYPOINT ["bash", "-ex", "/opt/exhibitor/wrapper.sh"]
+
