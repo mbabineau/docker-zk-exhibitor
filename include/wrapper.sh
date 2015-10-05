@@ -39,7 +39,6 @@ cat <<- EOF > /opt/exhibitor/defaults.conf
 	auto-manage-instances-fixed-ensemble-size=$ZK_ENSEMBLE_SIZE
 EOF
 
-
 if [[ -n ${AWS_ACCESS_KEY_ID} ]]; then
   cat <<- EOF > /opt/exhibitor/credentials.properties
     com.netflix.exhibitor.s3.access-key-id=${AWS_ACCESS_KEY_ID}
@@ -86,6 +85,10 @@ exec 2>&1
 # 	--configtype s3 --s3config thefactory-exhibitor:${CLUSTER_ID} \
 # 	--s3credentials /opt/exhibitor/credentials.properties \
 # 	--s3region us-west-2 --s3backup true
+
+if [[ ${ZK_LOG_TO_STDOUT} = "true" ]]; then
+  ln -sf /dev/stdout /opt/zookeeper/zookeeper.out
+fi
 
 java -jar /opt/exhibitor/exhibitor.jar \
   --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \

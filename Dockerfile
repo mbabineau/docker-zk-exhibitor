@@ -31,10 +31,7 @@ RUN \
 
     # Remove build-time dependencies
     && apt-get purge -y --auto-remove $BUILD_DEPS \
-    && rm -rf /var/lib/apt/lists/* \
-
-    # Send zk output to stdout
-    && ln -sf /dev/stdout /opt/zookeeper/zookeeper.out
+    && rm -rf /var/lib/apt/lists/*
 
 # Add the wrapper script to setup configs and exec exhibitor
 ADD include/wrapper.sh /opt/exhibitor/wrapper.sh
