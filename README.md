@@ -8,7 +8,7 @@ Available on the Docker Index as [mbabineau/zookeeper-exhibitor](https://index.d
 * Exhibitor 1.5.5
 * ZooKeeper 3.4.6
 
-### Usage
+### Usage (Using AWS for backup and coordination)
 The container expects the following environment variables to be passed in:
 
 * `S3_BUCKET` - bucket used by Exhibitor for backups and coordination
@@ -31,6 +31,22 @@ Starting the container:
         -e HOSTNAME=<host> \
         mbabineau/zookeeper-exhibitor:latest
 
+
+## Usage (Using a static list of hosts, no automatick backup)
+
+* `NO_AWS` - Set to any value except empty to disable AWS usage
+* `HOSTNAME` - addressable hostname for this node (Exhibitor will forward users of the UI to this address)
+* `SERVER_SPEC` - Zookeeper server spec. Example: 1:host1.net.com,2:host2.net.com 
+* `ZK_PASSWORD` - (optional) the HTTP Basic Auth password for the "zk" user
+* `ZK_DATA_DIR` - (optional) Zookeeper data directory
+* `ZK_LOG_DIR` - (optional) Zookeeper log directory
+
+Starting the container:
+
+    docker run -p 8181:8181 -p 2181:2181 -p 2888:2888 -p 3888:3888 \
+        -e SERVER_SPEC=<server-spec> \
+        -e HOSTNAME=<host> \
+        mbabineau/zookeeper-exhibitor:latest
 Once the container is up, confirm Exhibitor is running:
 
     $ curl -s localhost:8181/exhibitor/v1/cluster/status | python -m json.tool

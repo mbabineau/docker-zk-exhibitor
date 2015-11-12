@@ -33,8 +33,11 @@ RUN \
     && apt-get purge -y --auto-remove $BUILD_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
-# Add the wrapper script to setup configs and exec exhibitor
-ADD include/wrapper.sh /opt/exhibitor/wrapper.sh
+# Add the wrapper script that sets up configs without using AWS
+ADD include/vimond-wrapper.sh /opt/exhibitor/wrapper.sh
+
+# Add the original wrapper script to setup configs and exec exhibitor using AWS
+ADD include/wrapper.sh /opt/exhibitor/original-wrapper.sh
 
 # Add the optional web.xml for authentication
 ADD include/web.xml /opt/exhibitor/web.xml
