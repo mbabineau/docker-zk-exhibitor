@@ -1,5 +1,5 @@
 FROM debian:7.8
-MAINTAINER Mike Babineau michael.babineau@gmail.com
+MAINTAINER Oleksii Dzhulai nixlike@gmail.com 
 
 ENV \
     ZK_RELEASE="http://www.apache.org/dist/zookeeper/zookeeper-3.4.7/zookeeper-3.4.7.tar.gz" \
