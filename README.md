@@ -6,7 +6,7 @@ Available on the Docker Index as [mbabineau/zookeeper-exhibitor](https://index.d
 
 ### Versions
 * Exhibitor 1.5.5
-* ZooKeeper 3.4.6
+* ZooKeeper 3.4.7
 
 ### Usage
 The container expects the following environment variables to be passed in:
@@ -20,6 +20,8 @@ The container expects the following environment variables to be passed in:
 * `ZK_PASSWORD` - (optional) the HTTP Basic Auth password for the "zk" user
 * `ZK_DATA_DIR` - (optional) Zookeeper data directory
 * `ZK_LOG_DIR` - (optional) Zookeeper log directory
+* `ZK_AUTOPURGE_PURGEINTERVAL` - (optional) The time interval in hours for which the purge task has to be triggered. Set to a positive integer (1 and above) to enable the auto purging. Defaults to 0.
+* `ZK_AUTOPURGE_SNAPRETAINCOUNT` - (optional) When enabled, ZooKeeper auto purge feature retains the autopurge.snapRetainCount most recent snapshots and the corresponding transaction logs in the dataDir and dataLogDir respectively and deletes the rest. Defaults to 3. Minimum value is 3.
 * `HTTP_PROXY_HOST` - (optional) HTTP Proxy hostname
 * `HTTP_PROXY_PORT` - (optional) HTTP Proxy port
 * `HTTP_PROXY_USERNAME` - (optional) HTTP Proxy username
