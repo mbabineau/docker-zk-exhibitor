@@ -7,6 +7,8 @@ DEFAULT_AWS_REGION="us-west-2"
 DEFAULT_DATA_DIR="/opt/zookeeper/snapshots"
 DEFAULT_LOG_DIR="/opt/zookeeper/transactions"
 DEFAULT_ZK_ENSEMBLE_SIZE=0
+DEFAULT_AUTOPURGE_SNAPRETAINCOUNT="3"
+DEFAULT_AUTOPURGE_PURGEINTERVAL="0"
 S3_SECURITY=""
 HTTP_PROXY=""
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
@@ -18,6 +20,8 @@ HTTP_PROXY=""
 : ${HTTP_PROXY_PORT:=""}
 : ${HTTP_PROXY_USERNAME:=""}
 : ${HTTP_PROXY_PASSWORD:=""}
+: ${AUTOPURGE_SNAPRETAINCOUNT:=$DEFAULT_AUTOPURGE_SNAPRETAINCOUNT}
+: ${AUTOPURGE_PURGEINTERVAL:=$DEFAULT_AUTOPURGE_PURGEINTERVAL}
 
 cat <<- EOF > /opt/exhibitor/defaults.conf
 	zookeeper-data-directory=$ZK_DATA_DIR
@@ -33,7 +37,7 @@ cat <<- EOF > /opt/exhibitor/defaults.conf
 	connect-port=2888
 	observer-threshold=0
 	election-port=3888
-	zoo-cfg-extra=tickTime\=2000&initLimit\=10&syncLimit\=5&quorumListenOnAllIPs\=true&autopurge.snapRetainCount\=5&autopurge.purgeInterval\=1
+	zoo-cfg-extra=tickTime\=2000&initLimit\=10&syncLimit\=5&quorumListenOnAllIPs\=true&autopurge.snapRetainCount\=$AUTOPURGE_SNAPRETAINCOUNT&autopurge.purgeInterval\=$AUTOPURGE_PURGEINTERVAL
 	auto-manage-instances-settling-period-ms=0
 	auto-manage-instances=1
 	auto-manage-instances-fixed-ensemble-size=$ZK_ENSEMBLE_SIZE
