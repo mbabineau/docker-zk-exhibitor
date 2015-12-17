@@ -12,25 +12,32 @@ ENV \
 RUN \
     # Install dependencies
     apt-get update \
-    && apt-get install -y --allow-unauthenticated --no-install-recommends $BUILD_DEPS \
+    && apt-get install -y --allow-unauthenticated --no-install-recommends $BUILD_DEPS
 
     # Default DNS cache TTL is -1. DNS records, like, change, man.
-    && grep '^networkaddress.cache.ttl=' /etc/java-7-openjdk/security/java.security || echo 'networkaddress.cache.ttl=60' >> /etc/java-7-openjdk/security/java.security \
+RUN \
+	grep '^networkaddress.cache.ttl=' /etc/java-7-openjdk/security/java.security || echo 'networkaddress.cache.ttl=60' >> /etc/java-7-openjdk/security/java.security
 
     # Install ZK
-    && curl -Lo /tmp/zookeeper.tgz $ZK_RELEASE \
+
+RUN \
+	curl -Lo /tmp/zookeeper.tgz $ZK_RELEASE \
     && mkdir -p /opt/zookeeper/transactions /opt/zookeeper/snapshots \
     && tar -xzf /tmp/zookeeper.tgz -C /opt/zookeeper --strip=1 \
-    && rm /tmp/zookeeper.tgz \
+    && rm /tmp/zookeeper.tgz
 
     # Install Exhibitor
-    && mkdir -p /opt/exhibitor \
+
+RUN \
+	mkdir -p /opt/exhibitor \
     && curl -Lo /opt/exhibitor/pom.xml $EXHIBITOR_POM \
     && mvn -f /opt/exhibitor/pom.xml package \
-    && ln -s /opt/exhibitor/target/exhibitor*jar /opt/exhibitor/exhibitor.jar \
+    && ln -s /opt/exhibitor/target/exhibitor*jar /opt/exhibitor/exhibitor.jar
 
     # Remove build-time dependencies
-    && apt-get purge -y --auto-remove $BUILD_DEPS \
+
+RUN \
+	apt-get purge -y --auto-remove $BUILD_DEPS \
     && rm -rf /var/lib/apt/lists/*
 
 # Add the wrapper script to setup configs and exec exhibitor
