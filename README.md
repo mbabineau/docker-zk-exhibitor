@@ -4,9 +4,12 @@ Available on the Docker Index as [mbabineau/zookeeper-exhibitor](https://index.d
 
     docker pull mbabineau/zookeeper-exhibitor
 
+The image is based on Alpine Linux and is ~272MB.
+
 ### Versions
 * Exhibitor 1.5.5
 * ZooKeeper 3.4.6
+* Java 1.8
 
 ### Usage
 The container expects the following environment variables to be passed in:
