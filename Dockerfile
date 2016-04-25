@@ -28,7 +28,7 @@ RUN apk add --update wget curl jq coreutils && \
 
 ADD include/* ${EXBT_HOME}/
 
-RUN chown -R nobody.nobody ${JAVA_PREFS} ${ZK_HOME} ${EXBT_HOME} /tmp/zookeeper
+RUN chown -R nobody.nobody ${JAVA_PREFS} ${ZK_HOME} ${EXBT_HOME} ${ZK_DATA_DIR} ${ZK_LOG_DIR} /tmp/zookeeper
 
 USER nobody
 
