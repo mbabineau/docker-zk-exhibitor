@@ -15,7 +15,7 @@ ENV \
 RUN apk add --update wget curl jq coreutils && \
     wget -q -O - http://apache.mirrors.pair.com/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz | tar -xzf - -C /opt && \
     mv /opt/zookeeper-${ZOOKEEPER_VERSION} ${ZK_HOME} && \
-    mkdir -p ${ZK_HOME}/transactions ${ZK_HOME}/snapshots /tmp/zookeeper ${EXBT_HOME} && \
+    mkdir -p ${ZK_HOME}/transactions ${ZK_HOME}/snapshots /tmp/zookeeper ${EXBT_HOME} ${ZK_DATA_DIR} ${ZK_LOG_DIR} && \
     cp ${ZK_HOME}/conf/zoo_sample.cfg ${ZK_HOME}/conf/zoo.cfg && \
     wget --quiet http://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz -O - | tar xzf -  && \
     mv apache-maven-${MAVEN_VERSION} /usr/share/maven && \
