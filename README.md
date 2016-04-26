@@ -4,9 +4,12 @@ Available on the Docker Index as [mbabineau/zookeeper-exhibitor](https://index.d
 
     docker pull mbabineau/zookeeper-exhibitor
 
+The image is based on [Alpine Linux](http://alpinelinux.org/) and [anapsix java image](https://github.com/anapsix/docker-alpine-java) to keep the size of the image small.
+
 ### Versions
 * Exhibitor 1.5.5
 * ZooKeeper 3.4.6
+* Java 1.8 (Oracle JDK)
 
 ### Usage
 The container expects the following environment variables to be passed in:
@@ -92,3 +95,6 @@ Starting the container:
         -e S3_PREFIX=<key_prefix> \
         -e HOSTNAME=<host> \
         mbabineau/zookeeper-exhibitor:latest
+
+### Contributors:
+  * [devx](https://github.com/devx/)

@@ -1,46 +1,39 @@
-FROM debian:7.8
+FROM anapsix/alpine-java:jdk8
 MAINTAINER Mike Babineau michael.babineau@gmail.com
 
 ENV \
-    ZK_RELEASE="http://www.apache.org/dist/zookeeper/zookeeper-3.4.6/zookeeper-3.4.6.tar.gz" \
     EXHIBITOR_POM="https://raw.githubusercontent.com/Netflix/exhibitor/d911a16d704bbe790d84bbacc655ef050c1f5806/exhibitor-standalone/src/main/resources/buildscripts/standalone/maven/pom.xml" \
-    # Append "+" to ensure the package doesn't get purged
-    BUILD_DEPS="curl maven openjdk-7-jdk+" \
-    DEBIAN_FRONTEND="noninteractive"
+    EXBT_HOME="/opt/exhibitor" \
+    ZOOKEEPER_VERSION="3.4.8" \
+    ZK_HOME="/opt/zookeeper" \
+    ZK_DATA_DIR="/var/lib/zookeeper" \
+    ZK_LOG_DIR="/var/log/zookeeper" \
+    MAVEN_VERSION="3.3.9" \
+    JAVA_PREFS="/.java/.userPrefs" 
 
 # Use one step so we can remove intermediate dependencies and minimize size
-RUN \
-    # Install dependencies
-    apt-get update \
-    && apt-get install -y --allow-unauthenticated --no-install-recommends $BUILD_DEPS \
+RUN apk add --update wget curl jq coreutils && \
+    wget -q -O - http://apache.mirrors.pair.com/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz | tar -xzf - -C /opt && \
+    mv /opt/zookeeper-${ZOOKEEPER_VERSION} ${ZK_HOME} && \
+    mkdir -p ${ZK_HOME}/transactions ${ZK_HOME}/snapshots /tmp/zookeeper ${EXBT_HOME} ${ZK_DATA_DIR} ${ZK_LOG_DIR} && \
+    cp ${ZK_HOME}/conf/zoo_sample.cfg ${ZK_HOME}/conf/zoo.cfg && \
+    wget --quiet http://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz -O - | tar xzf -  && \
+    mv apache-maven-${MAVEN_VERSION} /usr/share/maven && \
+    ln -s /usr/share/maven/bin/mvn /usr/bin/mvn && \
+    curl -Lo ${EXBT_HOME}/pom.xml $EXHIBITOR_POM && \
+    mvn -f ${EXBT_HOME}/pom.xml package && \
+    mv ${EXBT_HOME}/target/exhibitor*jar ${EXBT_HOME}/exhibitor.jar && \
+    cd ${EXBT_HOME}/ && mvn clean && \
+    mkdir -p ${JAVA_PREFS}
 
-    # Default DNS cache TTL is -1. DNS records, like, change, man.
-    && grep '^networkaddress.cache.ttl=' /etc/java-7-openjdk/security/java.security || echo 'networkaddress.cache.ttl=60' >> /etc/java-7-openjdk/security/java.security \
+ADD include/* ${EXBT_HOME}/
 
-    # Install ZK
-    && curl -Lo /tmp/zookeeper.tgz $ZK_RELEASE \
-    && mkdir -p /opt/zookeeper/transactions /opt/zookeeper/snapshots \
-    && tar -xzf /tmp/zookeeper.tgz -C /opt/zookeeper --strip=1 \
-    && rm /tmp/zookeeper.tgz \
+RUN chown -R nobody.nobody ${JAVA_PREFS} ${ZK_HOME} ${EXBT_HOME} ${ZK_DATA_DIR} ${ZK_LOG_DIR} /tmp/zookeeper
 
-    # Install Exhibitor
-    && mkdir -p /opt/exhibitor \
-    && curl -Lo /opt/exhibitor/pom.xml $EXHIBITOR_POM \
-    && mvn -f /opt/exhibitor/pom.xml package \
-    && ln -s /opt/exhibitor/target/exhibitor*jar /opt/exhibitor/exhibitor.jar \
+USER nobody
 
-    # Remove build-time dependencies
-    && apt-get purge -y --auto-remove $BUILD_DEPS \
-    && rm -rf /var/lib/apt/lists/*
-
-# Add the wrapper script to setup configs and exec exhibitor
-ADD include/wrapper.sh /opt/exhibitor/wrapper.sh
-
-# Add the optional web.xml for authentication
-ADD include/web.xml /opt/exhibitor/web.xml
-
-USER root
 WORKDIR /opt/exhibitor
+
 EXPOSE 2181 2888 3888 8181
 
-ENTRYPOINT ["bash", "-ex", "/opt/exhibitor/wrapper.sh"]
+ENTRYPOINT ["/bin/bash", "-ex", "/opt/exhibitor/wrapper.sh"]
