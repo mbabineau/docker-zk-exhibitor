@@ -86,5 +86,5 @@ exec 2>&1
 # 	--configtype s3 --s3config thefactory-exhibitor:${CLUSTER_ID} \
 # 	--s3credentials /opt/exhibitor/credentials.properties \
 # 	--s3region us-west-2 --s3backup true
-ln -s /dev/stdout nohup.out
-/usr/bin/nohup java -jar /opt/exhibitor/exhibitor.jar --port 8181 --defaultconfig /opt/exhibitor/defaults.conf ${BACKUP_CONFIG} ${HTTP_PROXY} --hostname ${HOSTNAME} ${SECURITY}
+ln -sf /dev/stdout nohup.out
+/usr/bin/nohup java -jar /opt/exhibitor/exhibitor.jar --port 8181 --defaultconfig /opt/exhibitor/defaults.conf ${BACKUP_CONFIG} ${HTTP_PROXY} --hostname ${HOSTNAME} ${SECURITY} &
