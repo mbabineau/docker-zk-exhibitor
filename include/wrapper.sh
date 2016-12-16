@@ -1,4 +1,4 @@
-#! /bin/bash -e
+#!/bin/bash -e
 
 # Generates the default exhibitor config and launches exhibitor
 
@@ -18,6 +18,10 @@ HTTP_PROXY=""
 : ${HTTP_PROXY_PORT:=""}
 : ${HTTP_PROXY_USERNAME:=""}
 : ${HTTP_PROXY_PASSWORD:=""}
+
+if [[ -n "${HOSTNAME_COMMAND}" ]]; then
+  ADVERTISED_HOSTNAME=$(eval $HOSTNAME_COMMAND)
+fi
 
 cat <<- EOF > /opt/exhibitor/defaults.conf
 	zookeeper-data-directory=$ZK_DATA_DIR
@@ -91,5 +95,5 @@ java -jar /opt/exhibitor/exhibitor.jar \
   --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
   ${BACKUP_CONFIG} \
   ${HTTP_PROXY} \
-  --hostname ${HOSTNAME} \
+  --hostname ${ADVERTISED_HOSTNAME:-${HOSTNAME}} \
   ${SECURITY}

@@ -12,6 +12,7 @@ Available on the Docker Index as [mbabineau/zookeeper-exhibitor](https://index.d
 The container expects the following environment variables to be passed in:
 
 * `HOSTNAME` - addressable hostname for this node (Exhibitor will forward users of the UI to this address)
+* `HOSTNAME_COMMAND` - Using a command to override HOSTNAME, e.g. HOSTNAME_COMMAND: "curl -s --connect-timeout 2 --max-time 5 http://169.254.169.254/latest/meta-data/local-ipv4"
 * `S3_BUCKET` - (optional) bucket used by Exhibitor for backups and coordination
 * `S3_PREFIX` - (optional) key prefix within `S3_BUCKET` to use for this cluster
 * `AWS_ACCESS_KEY_ID` - (optional) AWS access key ID with read/write permissions on `S3_BUCKET`
@@ -40,9 +41,9 @@ Once the container is up, confirm Exhibitor is running:
     $ curl -s localhost:8181/exhibitor/v1/cluster/status | python -m json.tool
     [
         {
-            "code": 3, 
-            "description": "serving", 
-            "hostname": "<host>", 
+            "code": 3,
+            "description": "serving",
+            "hostname": "<host>",
             "isLeader": true
         }
     ]
@@ -59,6 +60,7 @@ Then confirm ZK is available:
 Exhibitor can also use an IAM Role attached to an instance instead of passing access or secret keys. This is an example policy that would be needed for the instance:
 ```
 {
+    "Version": "2012-10-17",
     "Statement": [
         {
             "Resource": [
@@ -70,7 +72,6 @@ Exhibitor can also use an IAM Role attached to an instance instead of passing ac
                 "s3:DeleteObject",
                 "s3:GetBucketAcl",
                 "s3:GetBucketPolicy",
-                "s3:GetObject",
                 "s3:GetObject",
                 "s3:GetObjectAcl",
                 "s3:ListBucket",
