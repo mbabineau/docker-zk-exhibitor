@@ -1,15 +1,19 @@
-#/bin/bash -e
+#!/bin/bash -e
 
 # Generates the default exhibitor config and launches exhibitor
 
 MISSING_VAR_MESSAGE="must be set"
 DEFAULT_DATA_DIR="/opt/zookeeper/snapshots"
 DEFAULT_LOG_DIR="/opt/zookeeper/transactions"
+HTTP_PROXY=""
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
 : ${SERVERS_SPEC:?$MISSING_VAR_MESSAGE}
 : ${ZK_DATA_DIR:=$DEFAULT_DATA_DIR}
 : ${ZK_LOG_DIR:=$DEFAULT_LOG_DIR}
-
+: ${HTTP_PROXY_HOST:=""}
+: ${HTTP_PROXY_PORT:=""}
+: ${HTTP_PROXY_USERNAME:=""}
+: ${HTTP_PROXY_PASSWORD:=""}
 
 function fileconfig {
     cat <<- EOF > /opt/exhibitor/defaults.conf
@@ -38,11 +42,23 @@ EOF
         echo "zk: ${ZK_PASSWORD},zk" > realm
     fi
 
+    if [[ -n $HTTP_PROXY_HOST ]]; then
+        cat <<- EOF > /opt/exhibitor/proxy.properties
+com.netflix.exhibitor.s3.proxy-host=${HTTP_PROXY_HOST}
+com.netflix.exhibitor.s3.proxy-port=${HTTP_PROXY_PORT}
+com.netflix.exhibitor.s3.proxy-username=${HTTP_PROXY_USERNAME}
+com.netflix.exhibitor.s3.proxy-password=${HTTP_PROXY_PASSWORD}
+EOF
+
+        HTTP_PROXY="--s3proxy=/opt/exhibitor/proxy.properties"
+    fi
+
     exec 2>&1
 
     java -jar /opt/exhibitor/exhibitor.jar \
         --port 8181 --defaultconfig /opt/exhibitor/defaults.conf \
         --hostname ${HOSTNAME} \
+        ${HTTP_PROXY} \
         --fsconfigdir /opt/exhibitor/data \
         --configtype file \
         ${SECURITY}
