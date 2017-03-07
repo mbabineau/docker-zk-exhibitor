@@ -7,7 +7,7 @@ DEFAULT_DATA_DIR="/opt/zookeeper/snapshots"
 DEFAULT_LOG_DIR="/opt/zookeeper/transactions"
 HTTP_PROXY=""
 : ${HOSTNAME:?$MISSING_VAR_MESSAGE}
-: ${SERVERS_SPEC:?$MISSING_VAR_MESSAGE}
+
 : ${ZK_DATA_DIR:=$DEFAULT_DATA_DIR}
 : ${ZK_LOG_DIR:=$DEFAULT_LOG_DIR}
 : ${HTTP_PROXY_HOST:=""}
@@ -68,5 +68,6 @@ if [ -z "$NO_AWS" ]
 then
     . original-wrapper.sh
 else
+    : ${SERVERS_SPEC:?$MISSING_VAR_MESSAGE}
     fileconfig
 fi
