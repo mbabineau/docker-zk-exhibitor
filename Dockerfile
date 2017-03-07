@@ -46,9 +46,7 @@ USER root
 WORKDIR /opt/exhibitor
 EXPOSE 2181 2888 3888 8181
 
-ENV SERVICE_8181_NAME=exhibitor \
-    SERVICE_8181_CHECK_HTTP=/exhibitor/v1/ui/index.html \
-    SERVICE_2181_NAME=zk-client-port \
+ENV SERVICE_8181_CHECK_HTTP=/exhibitor/v1/ui/index.html \
     SERVICE_2181_CHECK_TCP=true
 
 ENTRYPOINT ["bash", "-ex", "/opt/exhibitor/wrapper.sh"]
