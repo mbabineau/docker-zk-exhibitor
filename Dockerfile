@@ -12,19 +12,21 @@ ENV \
 
 RUN    # Install dependencies
 RUN    apt-get update
+RUN    apt-get install -y --allow-unauthenticated --no-install-recommends procps
 RUN    apt-get install -y --allow-unauthenticated --no-install-recommends $BUILD_DEPS
 
 RUN    # Default DNS cache TTL is -1. DNS records, like, change, man.
 RUN    grep '^networkaddress.cache.ttl=' /etc/java-8-openjdk/security/java.security || echo 'networkaddress.cache.ttl=60' >> /etc/java-8-openjdk/security/java.security
 
-RUN    # Install ZK
-RUN    curl -Lo /tmp/zookeeper.tar.gz $ZK_RELEASE
-RUN    mkdir /tmp/zookeeper
-RUN    mkdir -p /opt/zookeeper/transactions /opt/zookeeper/snapshots
-RUN    curl -Lo /opt/zookeeper/zookeeper-3.4.6.jar https://repo1.maven.org/maven2/org/apache/zookeeper/zookeeper/3.6.4/zookeeper-3.6.4.jar
-RUN    tar -xzf /tmp/zookeeper.tar.gz -C /opt/zookeeper --strip=1
-RUN    cp -rv /opt/zookeeper/lib/zookeeper* /opt/zookeeper
+#RUN    # Install ZK
+#RUN    curl -Lo /tmp/zookeeper.tar.gz $ZK_RELEASE
+#RUN    mkdir /tmp/zookeeper
+#RUN    mkdir -p /opt/zookeeper/transactions /opt/zookeeper/snapshots
+#RUN    curl -Lo /opt/zookeeper/zookeeper-3.4.6.jar https://repo1.maven.org/maven2/org/apache/zookeeper/zookeeper/3.6.4/zookeeper-3.6.4.jar
+#RUN    tar -xzf /tmp/zookeeper.tar.gz -C /opt/zookeeper --strip=1
+#RUN    cp -rv /opt/zookeeper/lib/zookeeper* /opt/zookeeper
 #RUN    rm /tmp/zookeeper.tgz
+ADD zk-dist/zookeeper-3.4.6.tar.gz /opt/
 
 RUN    # Install Exhibitor
 RUN    mkdir -p /opt/exhibitor

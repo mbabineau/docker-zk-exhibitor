@@ -1,0 +1,35 @@
+version: "3.9"
+services:
+  zk1:
+    cap_add:
+    - NET_ADMIN
+    - NET_RAW
+    image: local/zk
+    ports:
+    - "8181:8181"
+    environment:
+      - AWS_ACCESS_KEY_ID
+      - AWS_SECRET_ACCESS_KEY
+      - AWS_REGION
+      - S3_PREFIX=dvltest-zk-test
+      - S3_BUCKET=dvl-zk-exhibitor-testing
+  zk2:
+    environment:
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_REGION
+    - S3_PREFIX=dvltest-zk-test
+    - S3_BUCKET=dvl-zk-exhibitor-testing
+    image: local/zk
+    ports:
+    - "8182:8181"
+  zk3:
+    environment:
+    - AWS_ACCESS_KEY_ID
+    - AWS_SECRET_ACCESS_KEY
+    - AWS_REGION
+    - S3_PREFIX=dvltest-zk-test
+    - S3_BUCKET=dvl-zk-exhibitor-testing
+    image: local/zk
+    ports:
+    - "8183:8181"
